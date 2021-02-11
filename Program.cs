@@ -40,15 +40,35 @@ class SecondThreadWay
     }
     public void Run()
     {
-        int i = 0;
+        try
+        {
+            //int i = 0;
 
-        while (i++ < 10)
+            while (true)
+            {
+                Console.WriteLine($"I'm a child - {Name}...");
+                Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            }
+
+            Console.WriteLine($"Child thread ended - {Name}...");
+        } catch(ThreadAbortException ex)
+        {
+            if ((int)ex.ExceptionState != 0)
+            {
+                Console.WriteLine($"Child thread ended - {Name}...");
+                Console.WriteLine(ex.ExceptionState);
+            }
+            else
+            {
+                Thread.ResetAbort();
+            }
+        }
+
+        while (true)
         {
             Console.WriteLine($"I'm a child - {Name}...");
             Thread.Sleep(TimeSpan.FromMilliseconds(100));
         }
-
-        Console.WriteLine($"Child thread ended - {Name}...");
     }
 }
 
@@ -97,10 +117,9 @@ namespace Threading
 
 
             SecondThreadWay first = new SecondThreadWay("first");
-            SecondThreadWay second = new SecondThreadWay("second");
-            SecondThreadWay third = new SecondThreadWay("third");
+            //SecondThreadWay second = new SecondThreadWay("second");
+            //SecondThreadWay third = new SecondThreadWay("third");
 
-            // first approach
             //while (first.InnerThread.IsAlive || second.InnerThread.IsAlive
             //    || third.InnerThread.IsAlive)
             //{
@@ -108,9 +127,16 @@ namespace Threading
             //    Thread.Sleep(TimeSpan.FromMilliseconds(500));
             //}
 
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+            first.InnerThread.Suspend();
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+            first.InnerThread.Resume();
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+            first.InnerThread.Abort(0);
+
             first.InnerThread.Join();
-            second.InnerThread.Join();
-            third.InnerThread.Join();
+            //second.InnerThread.Join();
+            //third.InnerThread.Join();
 
             Console.WriteLine("Main ended.");
         }
