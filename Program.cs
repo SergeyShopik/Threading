@@ -5,6 +5,31 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 
+class SomeThread
+{
+    private Thread InnerThread;
+    private bool running = true;
+
+    public SomeThread()
+    {
+        InnerThread = new Thread(new ThreadStart(this.Run));
+        InnerThread.Start();
+    }
+
+    public void Run()
+    {
+        while(running)
+        {
+            Console.WriteLine("child...");
+        }
+    }
+
+    public void Stop()
+    {
+        running = false;
+    }
+}
+
 class SortProcess : IComparer<Process>
 {
     public int Compare(Process x, Process y) => x.Id - y.Id;
@@ -116,7 +141,7 @@ namespace Threading
 
 
 
-            SecondThreadWay first = new SecondThreadWay("first");
+            //SecondThreadWay first = new SecondThreadWay("first");
             //SecondThreadWay second = new SecondThreadWay("second");
             //SecondThreadWay third = new SecondThreadWay("third");
 
@@ -127,16 +152,34 @@ namespace Threading
             //    Thread.Sleep(TimeSpan.FromMilliseconds(500));
             //}
 
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-            first.InnerThread.Suspend();
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-            first.InnerThread.Resume();
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-            first.InnerThread.Abort(0);
+            //Thread.Sleep(TimeSpan.FromSeconds(2));
+            //first.InnerThread.Suspend();
+            //Thread.Sleep(TimeSpan.FromSeconds(2));
+            //first.InnerThread.Resume();
+            //Thread.Sleep(TimeSpan.FromSeconds(2));
+            //first.InnerThread.Abort(0);
 
-            first.InnerThread.Join();
+            //first.InnerThread.Join();
             //second.InnerThread.Join();
             //third.InnerThread.Join();
+
+            //Printer printer1 = new Printer();
+            //Printer printer2 = new Printer();
+
+
+            //Writer writer = new Writer(printer1, "first");
+            //Writer writer1 = new Writer(printer2, "second");
+            //Writer writer2 = new Writer(printer1, "third");
+            //Writer writer3 = new Writer(printer2, "fourth");
+
+            //writer.InnerThread.Join();
+            //writer1.InnerThread.Join();
+            //writer2.InnerThread.Join();
+            //writer3.InnerThread.Join();
+
+            SomeThread some = new SomeThread();
+            Thread.Sleep(2000);
+            some.Stop();
 
             Console.WriteLine("Main ended.");
         }
